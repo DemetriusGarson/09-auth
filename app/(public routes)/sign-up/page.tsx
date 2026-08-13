@@ -2,9 +2,9 @@
 import { register, RegisterRequest } from '@/lib/api/clientApi';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { ApiError } from '@/app/api/api';
 import { useAuthStore } from '@/lib/store/authStore';
 import css from './SignUpPage.module.css';
+import { ApiError } from '@/lib/api/api';
 
 const SignUpPage = () => {
   const router = useRouter();
@@ -23,7 +23,7 @@ const SignUpPage = () => {
       // Виконуємо редірект або відображаємо помилку
       if (res) {
         setUser(res);
-        console.log('22222222222222222');
+        // console.log('22222222222222222');
         router.push('/profile');
       } else {
         setError('Invalid email or password');
