@@ -1,57 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { api, ApiError } from '../../api';
-// Імпортуємо parse з пакету cookie та cookies з next/headers:
-import { parseSetCookie } from 'cookie';
+import { api } from '../../api';
 import { cookies } from 'next/headers';
+import { parseSetCookie } from 'cookie';
+import { isAxiosError } from 'axios';
+import { logErrorResponse } from '../../_utils/utils';
 
 export async function POST(req: NextRequest) {
-  // Парсимо body:
-  const body = await req.json();
-  console.log(body);
-  // const body = req;
   try {
-    // Запит до бекенду:
+    const body = await req.json();
+
     const apiRes = await api.post('auth/register', body);
-    // Отримуємо інстанс для роботи з cookies:
-    const cookieStore = await cookies(); //! куки браузера
-    // Отримуємо значення set-cookie з хедерів:
-    const setCookie = apiRes.headers['set-cookie']; //!куки от бэкэнда
-    // Додаємо перевірку існування setCookie:
+
+    const cookieStore = await cookies();
+    const setCookie = apiRes.headers['set-cookie'];
+
     if (setCookie) {
-      // Примусово робимо масив:
       const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
-      // Проходимось по масиву та парсимо кожне значення:
-      // щоб отримати результат у вигляді обʼєкту:
       for (const cookieStr of cookieArray) {
         const parsed = parseSetCookie(cookieStr);
-        // Створюємо налаштування для cookies:
-        const options = {
-          expires: parsed.expires ? new Date(parsed.expires) : undefined,
-          path: parsed.path,
-          maxAge: Number(parsed.maxAge),
-        };
-        // Методом cookieStore.set додаємо кукі до нашого запиту:
-        if (parsed.name === 'accessToken' && parsed.value) {
-          // cookieStore.set('імʼя ключа',  'значення токену',  додаткові налаштування)
-          cookieStore.set(parsed.name, parsed.value, options);
-        }
-        if (parsed.name === 'refreshToken' && parsed.value) {
-          cookieStore.set(parsed.name, parsed.value, options);
+
+        if (parsed.value) {
+          cookieStore.set(parsed.name, parsed.value, parsed);
         }
       }
-      // Тільки якщо є setCookie повертаємо результат
-      return NextResponse.json(apiRes.data);
+      return NextResponse.json(apiRes.data, { status: apiRes.status });
     }
-    console.log('1111111111111111111111');
+
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   } catch (error) {
+    if (isAxiosError(error)) {
+      logErrorResponse(error.response?.data);
+      return NextResponse.json(
+        { error: error.message, response: error.response?.data },
+        { status: error.status }
+      );
+    }
+    logErrorResponse({ message: (error as Error).message });
     return NextResponse.json(
-      {
-        error:
-          (error as ApiError).response?.data?.error ??
-          (error as ApiError).message,
-      },
-      { status: (error as ApiError).status }
+      { error: 'Internal Server Error' },
+      { status: 500 }
     );
   }
 }
