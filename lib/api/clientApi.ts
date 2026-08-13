@@ -88,12 +88,10 @@ export const logout = async (): Promise<void> => {
 
 //! Обновление профиля
 
-interface UserToUpdate {
-  email: string;
-  username: string;
-}
 
-export const updateMe = async (user: UserToUpdate): Promise<User> => {
-  const { data } = await nextServer.patch<User>('/users/me', user);
+export const updateMe = async (user: string): Promise<User> => {
+  const { data } = await nextServer.patch<User>('/users/me', {
+    username: user,
+  });
   return data;
 };

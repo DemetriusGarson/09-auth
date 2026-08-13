@@ -16,15 +16,6 @@ export default function EditProfilePage() {
   const [error, setError] = useState<boolean>(false);
   const router = useRouter();
 
-  // const { mutate } = useMutation({
-  //   mutationFn: updateMe,
-  //   onSuccess: (response: User) => {
-  //     console.log(response);
-  //     setUserData(response);
-  //     setUser(response);
-  //   },
-  // });
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -40,17 +31,8 @@ export default function EditProfilePage() {
   const handleSubmit = async (formData: FormData) => {
     const userNameToPatch = formData.get('username') as string;
     if (userData) {
-      // mutate({
-      //   username: userNameToPatch,
-      //   email: userData.email,
-      // });
-
       try {
-        // const updatedUser = await updateMe(userNameToPatch);
-        const updatedUser = await updateMe({
-          email: userData.email,
-          username: userNameToPatch,
-        });
+        const updatedUser = await updateMe(userNameToPatch);
         setUserData(updatedUser);
         setUser(updatedUser);
 
