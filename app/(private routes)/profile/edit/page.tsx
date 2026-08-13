@@ -46,7 +46,11 @@ export default function EditProfilePage() {
       // });
 
       try {
-        const updatedUser = await updateMe(userNameToPatch);
+        // const updatedUser = await updateMe(userNameToPatch);
+        const updatedUser = await updateMe({
+          email: userData.email,
+          username: userNameToPatch,
+        });
         setUserData(updatedUser);
         setUser(updatedUser);
 
