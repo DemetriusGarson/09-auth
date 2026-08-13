@@ -1,4 +1,3 @@
-// import axios from 'axios';
 import type { Note, NoteToPost } from '../../types/note';
 import { nextServer } from './api';
 import { User } from '@/types/user';
@@ -21,19 +20,19 @@ export async function fetchNotes(
       tag,
     },
   });
-  // console.log(response.data)
+
   return response.data;
 }
 
 export async function fetchNoteById(id: string): Promise<Note> {
   const response = await nextServer.get<Note>(`/notes/${id}`);
-  // console.log(response.data);
+
   return response.data;
 }
 
 export async function postNote(note: NoteToPost): Promise<Note> {
   const response = await nextServer.post<Note>('/notes', note);
-  // console.log(response.data);
+
   return response.data;
 }
 
@@ -46,33 +45,14 @@ export async function deleteNote(id: string): Promise<Note> {
 export type RegisterRequest = {
   email: string;
   password: string;
-  // userName: string;
 };
 
-// export type User = {
-//   id: string;
-//   email: string;
-//   userName?: string;
-//   photoUrl?: string;
-//   createdAt: Date;
-//   updatedAt: Date;
-// };
-
 //! РЕГИСТРАЦИЯ
-export const register = async (body: RegisterRequest) => {
+export const register = async (body: RegisterRequest): Promise<User> => {
   console.log(body);
   const res = await nextServer.post<User>('/auth/register', body);
   return res.data;
 };
-
-// export const registerTest = async (body: RegisterRequest) => {
-//   const resTest = await axios.post<User>(
-//     'https://notehub-api.goit.study/auth/register',
-//     body
-//   );
-//   console.log(resTest.data);
-//   return resTest.data;
-// };
 
 //! ЛОГИН
 export type LoginRequest = {
@@ -80,9 +60,8 @@ export type LoginRequest = {
   password: string;
 };
 
-export const login = async (data: LoginRequest) => {
+export const login = async (data: LoginRequest): Promise<User> => {
   const res = await nextServer.post<User>('/auth/login', data);
-  // console.log(res.data);
   return res.data;
 };
 
@@ -91,30 +70,25 @@ type CheckSessionRequest = {
   success: boolean;
 };
 
-export const checkSession = async () => {
+export const checkSession = async (): Promise<boolean> => {
   const res = await nextServer.get<CheckSessionRequest>('/auth/session');
   return res.data.success;
 };
 
 //! ДАННЫЕ ПОЛЬЗОВАТЕЛЯ
-export const getMe = async () => {
+export const getMe = async (): Promise<User> => {
   const { data } = await nextServer.get<User>('/users/me');
   return data;
 };
 
 //! ЛОГАУТ
-export const logout = async () => {
+export const logout = async (): Promise<void> => {
   await nextServer.post('/auth/logout');
 };
 
 //! Обновление профиля
 
-export type userToUpdate = {
-  username: string;
-  email: string;
-};
-
-export const updateMe = async (user: userToUpdate): Promise<User> => {
-  const { data } = await nextServer.patch<User>('/users/me', user);
+export const updateMe = async (username: string): Promise<User> => {
+  const { data } = await nextServer.patch<User>('/users/me', username);
   return data;
 };

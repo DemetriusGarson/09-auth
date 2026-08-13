@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 
 export default function EditProfilePage() {
-  // const user = useAuthStore(store => store.user);
   const setUser = useAuthStore(store => store.setUser);
 
   const [userData, setUserData] = useState<null | User>(null);
@@ -47,12 +46,9 @@ export default function EditProfilePage() {
       // });
 
       try {
-        const updatedUser = await updateMe({
-          username: userNameToPatch,
-          email: userData.email,
-        });
+        const updatedUser = await updateMe(userNameToPatch);
         setUserData(updatedUser);
-        setUser(userData);
+        setUser(updatedUser);
 
         router.push('/profile');
       } catch {
@@ -67,7 +63,7 @@ export default function EditProfilePage() {
 
   return (
     <>
-      {error && ErrorMessage}
+      {error && <ErrorMessage />}
       {userData && (
         <main className={css.mainContent}>
           <div className={css.profileCard}>

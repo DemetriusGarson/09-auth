@@ -23,7 +23,6 @@ const SignUpPage = () => {
       // Виконуємо редірект або відображаємо помилку
       if (res) {
         setUser(res);
-        // console.log('22222222222222222');
         router.push('/profile');
       } else {
         setError('Invalid email or password');
@@ -69,7 +68,7 @@ const SignUpPage = () => {
           </button>
         </div>
 
-        {error && <p className={css.error}>Error</p>}
+        {error && <p className={css.error}>{error}</p>}
       </form>
     </main>
   );

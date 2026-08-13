@@ -2,6 +2,30 @@ import { getServerMe } from '@/lib/api/serverApi';
 import Image from 'next/image';
 import css from './Profile.module.css';
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const user = await getServerMe();
+
+  return {
+    title: `User: ${user.username}`,
+    description: `User: ${user.username} Email: ${user.email}`,
+    openGraph: {
+      title: `User: ${user.username}`,
+      description: `User: ${user.username} Email: ${user.email}`,
+      url: `${process.env.NEXT_PUBLIC_API_URL}/profile`, //! ссылка на vercel
+      images: [
+        {
+          url: `${user.avatar}`,
+          width: 1200,
+          height: 630,
+          alt: 'NoteHub image',
+        },
+      ],
+      type: 'article',
+    },
+  };
+}
 
 export default async function Profile() {
   const user = await getServerMe();
