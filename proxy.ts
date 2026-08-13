@@ -42,19 +42,9 @@ export async function proxy(request: NextRequest) {
         // щоб отримати результат у вигляді обʼєкту:
         for (const cookieStr of cookieArray) {
           const parsed = parseSetCookie(cookieStr);
-          // Створюємо налаштування для cookies:
-          const options = {
-            expires: parsed.expires ? new Date(parsed.expires) : undefined,
-            path: parsed.path,
-            maxAge: Number(parsed.maxAge),
-          };
-          // Методом cookieStore.set додаємо кукі до нашого запиту:
-          if (parsed.name === 'accessToken' && parsed.value) {
-            // cookieStore.set('імʼя ключа',  'значення токену',  додаткові налаштування)
-            cookieStore.set(parsed.name, parsed.value, options);
-          }
-          if (parsed.name === 'refreshToken' && parsed.value) {
-            cookieStore.set(parsed.name, parsed.value, options);
+
+          if (parsed.value) {
+            cookieStore.set(parsed.name, parsed.value, parsed);
           }
         }
         // Якщо сесія все ще активна:
