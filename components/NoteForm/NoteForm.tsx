@@ -69,7 +69,7 @@ export default function NoteForm() {
           id={`${formId}-title`}
           type="text"
           name="title"
-          defaultValue={draft?.title}
+          value={draft.title}
           onChange={handleChange}
         />
       </div>
@@ -79,7 +79,7 @@ export default function NoteForm() {
           className={css.textarea}
           id={`${formId}-content`}
           name="content"
-          defaultValue={draft?.content}
+          value={draft.content}
           onChange={handleChange}
         ></textarea>
       </div>
@@ -89,7 +89,7 @@ export default function NoteForm() {
           className={css.select}
           id={`${formId}-tag`}
           name="tag"
-          defaultValue={draft?.tag}
+          value={draft?.tag}
           onChange={handleChange}
         >
           <option value="Todo">Todo</option>
