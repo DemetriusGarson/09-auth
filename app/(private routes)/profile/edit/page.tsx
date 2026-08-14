@@ -2,38 +2,39 @@
 import Image from 'next/image';
 import css from './EditProfilePage.module.css';
 import { useAuthStore } from '@/lib/store/authStore';
-import { getMe, updateMe } from '@/lib/api/clientApi';
-import { useEffect, useState } from 'react';
-import { User } from '@/types/user';
+import { updateMe } from '@/lib/api/clientApi';
+import { useState } from 'react';
+// import { User } from '@/types/user';
 // import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import ErrorMessage from '@/components/ErrorMessage/ErrorMessage';
 
 export default function EditProfilePage() {
+  const user = useAuthStore(store => store.user);
   const setUser = useAuthStore(store => store.setUser);
 
-  const [userData, setUserData] = useState<null | User>(null);
+  // const [userData, setUserData] = useState<null | User>(null);
   const [error, setError] = useState<boolean>(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userDataResponse = await getMe();
-        setUserData(userDataResponse);
-      } catch {
-        setError(true);
-      }
-    };
-    fetchUser();
-  }, [setUserData]);
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const userDataResponse = await getMe();
+  //       setUserData(userDataResponse);
+  //     } catch {
+  //       setError(true);
+  //     }
+  //   };
+  //   fetchUser();
+  // }, [setUserData]);
 
   const handleSubmit = async (formData: FormData) => {
     const userNameToPatch = formData.get('username') as string;
-    if (userData) {
+    if (user) {
       try {
         const updatedUser = await updateMe(userNameToPatch);
-        setUserData(updatedUser);
+        // setUserData(updatedUser);
         setUser(updatedUser);
 
         router.push('/profile');
@@ -50,13 +51,13 @@ export default function EditProfilePage() {
   return (
     <>
       {error && <ErrorMessage />}
-      {userData && (
+      {user && (
         <main className={css.mainContent}>
           <div className={css.profileCard}>
             <h1 className={css.formTitle}>Edit Profile</h1>
 
             <Image
-              src={userData?.avatar}
+              src={user.avatar}
               alt="User Avatar"
               width={120}
               height={120}
@@ -71,11 +72,11 @@ export default function EditProfilePage() {
                   id="username"
                   type="text"
                   className={css.input}
-                  defaultValue={userData?.username}
+                  defaultValue={user.username}
                 />
               </div>
 
-              <p>Email: {userData?.email}</p>
+              <p>Email: {user.email}</p>
 
               <div className={css.actions}>
                 <button type="submit" className={css.saveButton}>
